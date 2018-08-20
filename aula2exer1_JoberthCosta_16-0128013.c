@@ -64,6 +64,7 @@ void cadastrar(){
     do{
             //system("cls");
             printf("\nCPF: ");
+            getchar();
             fgets(CPF, sizeof(CPF), stdin);
             printf("\nNome: ");
             fgets(nome, sizeof(nome), stdin);
