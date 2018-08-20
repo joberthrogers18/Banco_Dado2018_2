@@ -9,12 +9,21 @@ typedef struct{
     char telefone[11];
 } Proprietario;
 Proprietario dono[MAX_POPRIETARIOS];
+
+int pos_atual = 0;
+
 void menu();
 void cadastrar();
 void remover();
 void listar();
+void escrever_arquivo();
+void ler_arquivo();
 int main()
 {
+    ler_arquivo();
+    /*printf("%s", dono[1].nome);
+    printf("%s", dono[1].CPF);
+    printf("%s", dono[1].telefone);*/
     menu();
     return 0;
 }
@@ -41,6 +50,9 @@ void menu(){
         }
     }while(op != 0);
 
+
+    escrever_arquivo();
+
 }
 
 void cadastrar(){
@@ -51,14 +63,15 @@ void cadastrar(){
     int op;
     do{
             //system("cls");
-            FILE *arquivo;
-            arquivo = (fopen("arquivo.txt","a+"));
             printf("\nCPF: ");
             fgets(CPF, sizeof(CPF), stdin);
             printf("\nNome: ");
             fgets(nome, sizeof(nome), stdin);
             printf("\nTelefone: ");
             fgets(telefone, sizeof(telefone), stdin);
+            strcpy(dono[pos_atual].CPF, CPF);
+            strcpy(dono[pos_atual].nome, nome);
+            strcpy(dono[pos_atual].telefone, telefone);
             /*for(i=0; i < MAX_POPRIETARIOS; i++)
             {
                 strcpy(dono[i].CPF, CPF);
@@ -70,14 +83,33 @@ void cadastrar(){
 
             }*/
 
-            fwrite(CPF, sizeof(CPF), 1,arquivo);
-            fclose(arquivo);
+            pos_atual++;
 
             printf("\n1 - continuar\n2 - Menu\n");
             scanf("%d", &op);
 
     }while(op != 2);
-}/*
+}
+
+void escrever_arquivo(){
+    FILE *arquivo;
+    arquivo = (fopen("arquivo.txt","wb"));
+    fwrite(dono, sizeof(Proprietario), pos_atual,arquivo);
+    fclose(arquivo);
+}
+
+void ler_arquivo(){
+    FILE *arquivo;
+    arquivo = (fopen("arquivo.txt","rb"));
+
+    while(!feof(arquivo)){
+        fread(dono, sizeof(Proprietario), 50, arquivo);
+    }
+    
+    fclose(arquivo);
+}
+
+/*
 void remover(){
     int numero, op;
     do{
