@@ -8,7 +8,14 @@ typedef struct{
     char nome[50];
     char telefone[11];
 } Proprietario;
+
+typedef struct{
+    char CPF[11];
+    int posicao;
+}Index;
+
 Proprietario dono[MAX_POPRIETARIOS];
+Index indice[MAX_POPRIETARIOS];
 
 int pos_atual = 0;
 
@@ -16,11 +23,14 @@ void menu();
 void cadastrar();
 void remover();
 void listar();
-void escrever_arquivo();
-void ler_arquivo();
+void escrever_arquivo_proprietarios();
+void ler_arquivo_proprietarios();
+void escrever_arquivo_index();
+void ler_arquivo_index();
 int main()
 {
-    ler_arquivo();
+    ler_arquivo_proprietarios();
+    ler_arquivo_index();
     /*printf("%s", dono[1].nome);
     printf("%s", dono[1].CPF);
     printf("%s", dono[1].telefone);*/
@@ -50,9 +60,7 @@ void menu(){
         }
     }while(op != 0);
 
-
-    escrever_arquivo();
-
+    escrever_arquivo_proprietarios();
 }
 
 void cadastrar(){
@@ -92,24 +100,60 @@ void cadastrar(){
     }while(op != 2);
 }
 
-void escrever_arquivo(){
+void escrever_arquivo_proprietarios(){
     FILE *arquivo;
-    arquivo = (fopen("arquivo.txt","wb"));
+    arquivo = (fopen("proprietario.txt","ab+"));
     fwrite(dono, sizeof(Proprietario), pos_atual,arquivo);
     fclose(arquivo);
+
+    escrever_arquivo_index();
 }
 
-void ler_arquivo(){
+void ler_arquivo_proprietarios(){
     FILE *arquivo;
-    arquivo = (fopen("arquivo.txt","rb"));
+    arquivo = (fopen("proprietario.txt","rb+"));
 
     while(!feof(arquivo)){
         fread(dono, sizeof(Proprietario), 50, arquivo);
+    }
+
+    int i;
+
+    while(strcmp(dono[i].nome,"") != 0){
+        pos_atual++;
+        i++;
     }
     
     fclose(arquivo);
 }
 
+void ler_arquivo_index(){
+    FILE *arquivo;
+    arquivo = (fopen("index.txt","rb+"));
+
+    while(!feof(arquivo)){
+        fread(indice, sizeof(Index), 50, arquivo);
+    }
+    
+    fclose(arquivo);
+}
+
+void escrever_arquivo_index(){
+    FILE *arquivo;
+    arquivo = (fopen("index.txt", "ab+"));
+
+    int i = 0;
+
+    while(strcmp(dono[i].nome,"") != 0){
+        indice[i].posicao = i;
+        strcpy(indice[i].CPF, dono[i].CPF);
+        i++;
+    }
+
+    fwrite(indice, sizeof(Index), pos_atual, arquivo);
+    fclose(arquivo);
+
+}
 /*
 void remover(){
     int numero, op;
@@ -132,10 +176,21 @@ void listar(){
     system("cls");
     printf("\nLista de Proprietarios\n");
     for (i=0; i < MAX_POPRIETARIOS; i++){
-        printf("Proprietario numero: %d\n", i+1);
-        printf("Nome: %s\n", dono[i].nome);
-        printf("CPF: %s\n", dono[i].CPF);
-        printf("Telefone: %s\n", dono[i].telefone);
+
+        if(strcmp(dono[i].nome, "") != 0){
+            printf("Proprietario numero: %d\n", i+1);
+            printf("Nome: %s\n", dono[i].nome);
+            printf("CPF: %s\n", dono[i].CPF);
+            printf("Telefone: %s\n", dono[i].telefone);
+        }
+    }
+
+     for (i=0; i < MAX_POPRIETARIOS; i++){
+
+        if(strcmp(indice[i].CPF, "") != 0){
+            printf("Proprietario numero: %d\n", i+1);
+            printf("CPF: %s\n", indice[i].CPF);
+        }
     }
     printf("\n1 - continuar\n0 - Menu\n");
     scanf("%d", &op);
