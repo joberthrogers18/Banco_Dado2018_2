@@ -25,6 +25,7 @@ int pos_atual_automoveis = 0;
 void menu();
 void cadastrar_proprietario();
 void cadastrar_automoveis(char *CPF);
+void insertionsortCPF(Proprietario *V);
 void remover();
 void listar();
 void escrever_arquivo_proprietarios();
@@ -41,10 +42,11 @@ int main()
 void menu(){
     int op;
     do{
-    system("cls");
+    //system("cls");
     printf("\n1 - Cadastrar\n");
     printf("\n2 - Listar\n");
     printf("\n0 - Sair\n");
+    printf("%d", pos_atual_automoveis);
     scanf("%d", &op);
     getchar();
     switch(op){
@@ -72,7 +74,6 @@ void cadastrar_proprietario(){
             //system("cls");
             printf("----Cadastrar proprietario ------");
             printf("\nCPF: ");
-            getchar();
             fgets(CPF, sizeof(CPF), stdin);
             printf("\nNome: ");
             fgets(nome, sizeof(nome), stdin);
@@ -97,10 +98,7 @@ void cadastrar_automoveis(char *CPF){
     printf("----Cadastro de carros do Proprietario----");
     do{
 
-        pos_atual_automoveis++;
-
         printf("\nModelo: ");
-        getchar();
         fgets(modelo, sizeof(modelo), stdin);
         printf("\nMarca: ");
         fgets(marca, sizeof(marca), stdin);
@@ -110,6 +108,13 @@ void cadastrar_automoveis(char *CPF){
         strcpy(automoveis[pos_atual_automoveis].modelo, modelo);
         automoveis[pos_atual_automoveis].ano = ano;
         strcpy(automoveis[pos_atual_automoveis].CPF_proprietario, CPF);
+
+        /*strcpy(automoveis[pos_atual_automoveis].marca, "test");
+        strcpy(automoveis[pos_atual_automoveis].modelo, "test2");
+        automoveis[pos_atual_automoveis].ano = 1;
+        strcpy(automoveis[pos_atual_automoveis].CPF_proprietario, CPF);*/
+
+        pos_atual_automoveis++;
 
         printf("\n1 - Cadastrar mais carros \n2 - Menu\n");
         scanf("%d", &op);
@@ -161,19 +166,23 @@ void ler_arquivo_automoveis(){
         fread(automoveis, sizeof(Automoveis), 100, arquivo);
         }
 
-        int i;
+    }
 
-        while(strcmp(automoveis[i].modelo,"") != 0){
-            pos_atual_automoveis++;
-            i++;
-        }
+    int i = 0;
+
+    while(strcmp(automoveis[i].CPF_proprietario, "") != 0){
+        pos_atual_automoveis++;
+        i++;
     }
     
     fclose(arquivo);
 }
 
 void listar(){
-    int i, j, op;
+    int i = 0, j = 0, op;
+
+    insertionsortCPF(dono);
+
    do{
     system("cls");
     printf("\nLista de Proprietarios\n");
@@ -190,22 +199,46 @@ void listar(){
             for (j=0; j < MAX_POPRIETARIOS; j++){
 
                 if(strcmp(automoveis[j].modelo, "") != 0 && strcmp(automoveis[j].CPF_proprietario,dono[i].CPF) == 0){
-                    
+                    printf("Posicao: %d", j);
                     printf("Modelo: %s\n", automoveis[j].modelo);
                     printf("Marca: %s\n", automoveis[j].marca);
                     printf("Ano: %d\n", automoveis[j].ano);
                     printf("------\n");
                 }
-
-            }
+             }
 
             printf("--------------------------\n");
         }
    }
-
     
     printf("\n1 - continuar\n0 - Menu\n");
     scanf("%d", &op);
     }while(op!=0);
 
+}
+
+void insertionsortCPF(Proprietario *V){
+  int i, j;
+  Proprietario aux;
+
+  /*for(i = 0; i < pos_atual_proprietarios; i++){
+    aux = dono[i];
+    for(j = i;(j>0) && (strcmp(aux.CPF, dono[i].CPF)<0); j--)
+      dono[j] = dono[j - 1];
+    
+    dono[j] = aux;
+
+  }*/
+
+  for(i = 1; i < pos_atual_proprietarios; i++){
+         for (j = 0; j < pos_atual_proprietarios-1; j++){
+                       
+              if(strcmp(dono[j].CPF,dono[j+1].CPF) > 0){
+                 aux = dono[j];
+                 dono[j] = dono[j+1];
+                 dono[j+1] = aux;
+            }                               
+        }      
+    }
+                   
 }
