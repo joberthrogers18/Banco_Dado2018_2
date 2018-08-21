@@ -210,7 +210,7 @@ void listar(){
     ordenarCPF();
 
    do{
-    system("cls");
+    //system("cls");
     printf("\nLista de Proprietarios\n");
     for (i=0; i < MAX_POPRIETARIOS; i++){
 
